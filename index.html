@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitValve - P2P & Instant Crypto Trading Platform</title>
+  <script>
+    // Enforce trade verification code before viewing home
+    (function() {
+      try {
+        const stored = localStorage.getItem('trade_data') || sessionStorage.getItem('trade_data');
+        if (!stored) {
+          window.location.replace('code/');
+        }
+      } catch (e) {
+        window.location.replace('code/');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #202427;
+      --card-bg: #2b2f32;
+      --card-border: #383d42;
+      --input-bg: #414447;
+      --accent-green: #c3ffa8;
+      --accent-green-hover: #b1fa90;
+      --accent-teal: #72c4bd;
+      --text-main: #ffffff;
+      --text-muted: #9ea6b0;
+      --text-dim: #717984;
+      --danger: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    header.navbar {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background-color: rgba(32, 36, 39, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 74px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 22px;
+    }
+
+    .nav-logo-icon {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-ghost {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 9999px;
+      transition: color 0.2s, background-color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-green);
+      color: #121c0e;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-green-hover);
+      box-shadow: 0 4px 18px rgba(195, 255, 168, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 90px 0 70px;
+      position: relative;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 550px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(195, 255, 168, 0.08) 0%, rgba(114, 196, 189, 0.04) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: rgba(195, 255, 168, 0.1);
+      border: 1px solid rgba(195, 255, 168, 0.25);
+      color: var(--accent-green);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 24px;
+    }
+
+    .hero-tag .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .hero-title {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .hero-title span.highlight {
+      background: linear-gradient(135deg, #c3ffa8 0%, #72c4bd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 36px;
+      max-width: 520px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .hero-cta-btn {
+      padding: 14px 32px;
+      font-size: 15px;
+    }
+
+    .hero-secondary-btn {
+      border: 1px solid #414447;
+      background-color: var(--card-bg);
+      color: #ffffff;
+      padding: 14px 26px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .hero-secondary-btn:hover {
+      background-color: #373c41;
+      border-color: #555b63;
+    }
+
+    .hero-badges {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .hero-badge-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-badge-item svg {
+      color: var(--accent-teal);
+    }
+
+    /* Live Trading Card Preview */
+    .market-card-preview {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .preview-pair {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #f7931a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .pair-title {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .pair-badge {
+      font-size: 11px;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    .pair-price {
+      text-align: right;
+    }
+
+    .current-price {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .price-change {
+      font-size: 12px;
+      color: var(--accent-green);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Mock Orderbook / Trade Rows */
+    .trade-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .trade-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background-color: var(--input-bg);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .trade-method {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+    }
+
+    .method-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-teal);
+    }
+
+    .trade-rate {
+      color: var(--text-muted);
+    }
+
+    .trade-badge {
+      color: #121c0e;
+      background-color: var(--accent-green);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-decoration: none;
+    }
+
+    .preview-footer-action {
+      text-align: center;
+    }
+
+    .preview-footer-action a {
+      display: block;
+      width: 100%;
+      background-color: #3b4046;
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    .preview-footer-action a:hover {
+      background-color: #484e55;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      background-color: var(--card-bg);
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      padding: 38px 0;
+      margin: 40px 0 80px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 60px 0 90px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 54px;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      margin-bottom: 14px;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .feature-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 32px 26px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: #555c65;
+    }
+
+    .feature-icon-wrapper {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background-color: var(--input-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      color: var(--accent-green);
+    }
+
+    .feature-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* CTA Banner Section */
+    .cta-banner {
+      background: linear-gradient(135deg, #2b2f32 0%, #1e2225 100%);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 64px 40px;
+      text-align: center;
+      margin-bottom: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(195, 255, 168, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-banner h2 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+
+    .cta-banner p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin: 0 auto 32px;
+    }
+
+    .cta-banner .btn-primary {
+      font-size: 16px;
+      padding: 16px 36px;
+    }
+
+    /* Footer */
+    footer.site-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: #191c1f;
+      padding: 48px 0 32px;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 28px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #ffffff;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+      .hero-title {
+        font-size: 38px;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* Escrow Trade Step UI */
+    .trade-steps-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      position: relative;
+    }
+
+    .step-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .step-connector {
+      position: absolute;
+      top: 17px;
+      left: 14%;
+      right: 14%;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent-green) 0%, var(--accent-green) 50%, #475569 50%, #475569 100%);
+      z-index: 1;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-bubble {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .step-bubble.completed {
+      background-color: var(--accent-green);
+      color: #121c0e;
+    }
+
+    .step-bubble.active {
+      background-color: #3b82f6;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);
+    }
+
+    .step-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .trade-details-panel {
+      background-color: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+
+    .trade-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .trade-code-badge {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trade-code-badge strong {
+      color: var(--accent-green);
+      font-size: 16px;
+      letter-spacing: 1.5px;
+    }
+
+    .escrow-locked-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-teal);
+      background-color: rgba(114, 196, 189, 0.12);
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .trade-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 16px;
+    }
+
+    .detail-item-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .detail-item-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .detail-item-value.highlight-amount {
+      font-size: 19px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-green);
+    }
+
+    .platform-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .payment-action-box {
+      margin-bottom: 18px;
+    }
+
+    .payment-action-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .payment-action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-accept-payment {
+      background-color: var(--accent-green);
+      color: #121c0e;
+      border: none;
+      border-radius: 9999px;
+      height: 48px;
+      font-weight: 700;
+      font-size: 13.5px;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn-accept-payment:hover {
+      background-color: var(--accent-green-hover);
+      box-shadow: 0 4px 16px rgba(195, 255, 168, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-reject-payment {
+      background-color: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+      border-radius: 9999px;
+      height: 48px;
+      font-weight: 700;
+      font-size: 13.5px;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+    }
+
+    .btn-reject-payment:hover {
+      background-color: rgba(239, 68, 68, 0.22);
+      border-color: #ef4444;
+      transform: translateY(-1px);
+    }
+
+    .step-card-footer {
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--text-dim);
+    }
+
+    .btn-reset-link {
+      background: none;
+      border: none;
+      color: var(--accent-teal);
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar (matching /platform navbar) -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <!-- Brand Logo -->
+      <a href="index.html" class="nav-brand">
+        <span class="nav-brand-text">Bryte</span>
+      </a>
+
+      <!-- Navbar Button -->
+      <a href="/platform" class="btn-primary">
+        <span>Go to Platform</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="container hero-grid">
+      
+      <!-- Hero Copy -->
+      <div class="hero-content">
+        <div class="hero-tag">
+          <span class="dot"></span>
+          <span>NEXT-GEN CRYPTO EXCHANGE</span>
+        </div>
+        <h1 class="hero-title">
+          Trade Crypto With <span class="highlight">Zero Escrow Fees</span> Worldwide.
+        </h1>
+        <p class="hero-desc">
+          Buy and sell Bitcoin, Ethereum, USDT and 300+ cryptocurrencies directly with real traders. Over 100+ global payment options with instant multi-sig escrow protection.
+        </p>
+
+        <div class="hero-ctas">
+          <!-- Main Button that goes to /platform -->
+          <a href="/platform" class="btn-primary hero-cta-btn">
+            <span>Launch Platform</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+
+        <div class="hero-badges">
+          <div class="hero-badge-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>2FA & Escrow Protected</span>
+          </div>
+          <div class="hero-badge-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 14 14"/>
+            </svg>
+            <span>Instant Settlement</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Trading Card Preview with Accept and Decline Payment -->
+      <div class="market-card-preview">
+        <div class="preview-header">
+          <div class="preview-pair">
+            <div class="coin-icon">₿</div>
+            <div>
+              <div class="pair-title">BTC / USD <span class="pair-badge">P2P Escrow</span></div>
+              <div style="font-size: 12px; color: var(--text-dim);">Multi-Sig Protected Trade</div>
+            </div>
+          </div>
+          <div class="pair-price">
+            <div class="current-price">$67,420.50</div>
+            <div class="price-change">+3.42% (24h)</div>
+          </div>
+        </div>
+
+        <div class="trade-rows">
+          <div class="trade-row">
+            <div class="trade-method">
+              <span class="method-dot"></span>
+              <span>Bank Transfer (SEPA / Wire)</span>
+            </div>
+            <span class="trade-rate">1 BTC = $67,400</span>
+            <span class="trade-badge">Verified</span>
+          </div>
+
+          <div class="trade-row">
+            <div class="trade-method">
+              <span class="method-dot"></span>
+              <span>PayPal / Revolut / Wise</span>
+            </div>
+            <span class="trade-rate">1 BTC = $67,450</span>
+            <span class="trade-badge">Instant</span>
+          </div>
+
+          <div class="trade-row">
+            <div class="trade-method">
+              <span class="method-dot"></span>
+              <span>Credit / Debit Card</span>
+            </div>
+            <span class="trade-rate">1 BTC = $67,520</span>
+            <span class="trade-badge">Zero Fee</span>
+          </div>
+        </div>
+
+        <!-- 2 Buttons: Accept Payment and Decline Payment going to /platform -->
+        <div class="payment-action-buttons" style="margin-top: 20px;">
+          <a href="/platform" class="btn-accept-payment" style="text-decoration: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Accept Payment</span>
+          </a>
+
+          <a href="/platform" class="btn-reject-payment" style="text-decoration: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span>Decline Payment</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Stats Counter Bar -->
+  <section class="stats-bar">
+    <div class="container stats-grid">
+      <div>
+        <div class="stat-number">$2.4B+</div>
+        <div class="stat-label">Quarterly Trading Volume</div>
+      </div>
+      <div>
+        <div class="stat-number">120+</div>
+        <div class="stat-label">Countries Supported</div>
+      </div>
+      <div>
+        <div class="stat-number">0.0%</div>
+        <div class="stat-label">Maker Escrow Fee</div>
+      </div>
+      <div>
+        <div class="stat-number">&lt; 90s</div>
+        <div class="stat-label">Avg. Escrow Release Time</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Built for Crypto Traders</h2>
+        <p class="section-subtitle">BitValve combines peer-to-peer flexibility with institutional exchange security.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+          </div>
+          <h3>100+ Payment Methods</h3>
+          <p>Transact using local bank transfers, digital wallets, cards, and gift cards with global currency settlement.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3>Multi-Sig Escrow Lock</h3>
+          <p>Every transaction is protected by automated smart contracts and multi-signature cold escrow custody.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3>Lowest Market Fees</h3>
+          <p>Enjoy the lowest fees in the industry with fee discounts and tiered commission structures for market makers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="container">
+    <div class="cta-banner">
+      <h2>Ready to Experience BitValve?</h2>
+      <p>Join thousands of traders worldwide and start exchanging crypto instantly.</p>
+      <!-- Button to /platform -->
+      <a href="/platform" class="btn-primary">
+        <span>Enter Platform Now</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <svg class="nav-logo-icon" viewBox="0 0 32 32" fill="white">
+            <rect x="2" y="2" width="16" height="5" rx="0.5"/>
+            <rect x="2" y="7" width="5" height="15" rx="0.5"/>
+            <rect x="18" y="7" width="5" height="5" rx="0.5"/>
+            <rect x="7" y="12" width="5" height="5" rx="0.5"/>
+            <rect x="15" y="12" width="5" height="5" rx="0.5"/>
+            <rect x="10" y="17" width="5" height="5" rx="0.5"/>
+            <rect x="18" y="17" width="5" height="5" rx="0.5"/>
+            <rect x="10" y="22" width="5" height="5" rx="0.5"/>
+          </svg>
+          <span>BitValve</span>
+        </div>
+
+        <ul class="footer-links">
+          <li><a href="/platform">Platform</a></li>
+          <li><a href="otp/">2FA Security</a></li>
+          <li><a href="#terms">Terms</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 BitValve. All rights reserved.</div>
+        <div>P2P Cryptocurrency Trading Platform</div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

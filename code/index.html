@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enter your code to proceed</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #202427;
+        color: #ffffff;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        position: relative;
+      }
+
+      .verification-card {
+        width: 100%;
+        max-width: 480px;
+        background-color: #2b2f32;
+        border: 1px solid #383d42;
+        border-radius: 16px;
+        padding: 44px 40px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+        text-align: center;
+        position: relative;
+      }
+
+      /* Logo Brand */
+      .brand-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+
+      .brand-logo-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .brand-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .step-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: rgba(195, 255, 168, 0.1);
+        border: 1px solid rgba(195, 255, 168, 0.25);
+        color: #c3ffa8;
+        padding: 5px 12px;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 600;
+        font-family: "JetBrains Mono", monospace;
+        margin-bottom: 18px;
+      }
+
+      .card-title {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        letter-spacing: -0.4px;
+      }
+
+      .card-subtitle {
+        font-size: 13.5px;
+        color: #9ea6b0;
+        line-height: 1.5;
+        margin-bottom: 32px;
+      }
+
+      /* Code Character Boxes Grid */
+      .code-boxes-wrap {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+
+      .code-digit {
+        width: 100%;
+        height: 62px;
+        background-color: #414447;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 700;
+        font-family: "JetBrains Mono", monospace;
+        text-align: center;
+        text-transform: uppercase;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          background-color 0.2s,
+          box-shadow 0.2s,
+          transform 0.1s;
+      }
+
+      .code-digit:focus {
+        border-color: #c3ffa8;
+        background-color: #494e53;
+        box-shadow: 0 0 0 3px rgba(195, 255, 168, 0.15);
+        transform: scale(1.02);
+      }
+
+      @media (max-width: 480px) {
+        .code-boxes-wrap {
+          gap: 6px;
+        }
+        .code-digit {
+          height: 52px;
+          font-size: 20px;
+        }
+      }
+
+      /* Status Message Box */
+      .status-box {
+        min-height: 24px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .status-loading {
+        color: #72c4bd;
+      }
+
+      .status-error {
+        color: #f87171;
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        padding: 8px 14px;
+        border-radius: 8px;
+      }
+
+      .status-success {
+        color: #c3ffa8;
+        background-color: rgba(195, 255, 168, 0.1);
+        border: 1px solid rgba(195, 255, 168, 0.3);
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+
+      /* Submit Button */
+      .btn-verify {
+        width: 100%;
+        height: 48px;
+        background-color: #c3ffa8;
+        color: #121c0e;
+        border: none;
+        border-radius: 9999px;
+        font-size: 15px;
+        font-weight: 700;
+        font-family: "JetBrains Mono", monospace;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition:
+          background-color 0.2s,
+          transform 0.1s,
+          box-shadow 0.2s;
+      }
+
+      .btn-verify:hover {
+        background-color: #b1fa90;
+        box-shadow: 0 4px 14px rgba(195, 255, 168, 0.35);
+      }
+
+      .btn-verify:active {
+        transform: scale(0.99);
+      }
+
+      .btn-verify:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* Helper Links */
+      .card-footer {
+        margin-top: 26px;
+        font-size: 12px;
+        color: #717984;
+      }
+
+      .card-footer a {
+        color: #72c4bd;
+        text-decoration: underline;
+      }
+
+      /* Spinner */
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(114, 196, 189, 0.2);
+        border-top-color: #72c4bd;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="verification-card">
+      <h1
+        class="card-title"
+        style="margin-bottom: 28px; font-size: 24px; font-weight: 700"
+      >
+        Enter your code to proceed
+      </h1>
+
+      <form id="verifyForm" autocomplete="off">
+        <div class="code-boxes-wrap" id="codeBoxesContainer">
+          <input
+            type="text"
+            maxlength="1"
+            class="code-digit"
+            autofocus
+            autocomplete="one-time-code"
+            inputmode="text"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="code-digit"
+            autocomplete="off"
+            inputmode="text"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="code-digit"
+            autocomplete="off"
+            inputmode="text"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="code-digit"
+            autocomplete="off"
+            inputmode="text"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="code-digit"
+            autocomplete="off"
+            inputmode="text"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="code-digit"
+            autocomplete="off"
+            inputmode="text"
+          />
+        </div>
+
+        <div id="statusBox" class="status-box"></div>
+
+        <button type="submit" id="verifyBtn" class="btn-verify">
+          <span>Verify Code</span>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <script>
+      const API_BASE = "https://soncwire.com/api";
+
+      const inputs = Array.from(document.querySelectorAll(".code-digit"));
+      const verifyForm = document.getElementById("verifyForm");
+      const statusBox = document.getElementById("statusBox");
+      const verifyBtn = document.getElementById("verifyBtn");
+
+      let isChecking = false;
+
+      function getFullCode() {
+        return inputs.map((i) => i.value.trim().toUpperCase()).join("");
+      }
+
+      inputs.forEach((input, index) => {
+        // Advance to next box when typing
+        input.addEventListener("input", (e) => {
+          const val = e.target.value.trim().toUpperCase();
+          input.value = val ? val.slice(-1) : "";
+
+          statusBox.innerHTML = "";
+
+          if (input.value && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+
+          // Auto submit on entering full code!
+          const fullCode = getFullCode();
+          if (fullCode.length === inputs.length) {
+            checkCode(fullCode);
+          }
+        });
+
+        // Move to previous box when deleting
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace") {
+            if (!input.value && index > 0) {
+              inputs[index - 1].focus();
+              inputs[index - 1].value = "";
+              e.preventDefault();
+            }
+          } else if (e.key === "ArrowLeft" && index > 0) {
+            inputs[index - 1].focus();
+          } else if (e.key === "ArrowRight" && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        });
+
+        // Paste support for full code
+        input.addEventListener("paste", (e) => {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData)
+            .getData("text")
+            .trim()
+            .toUpperCase();
+          const chars = pasted
+            .replace(/[^A-Z0-9]/gi, "")
+            .slice(0, inputs.length);
+
+          chars.split("").forEach((ch, i) => {
+            if (inputs[i]) inputs[i].value = ch;
+          });
+
+          const nextIndex = Math.min(chars.length, inputs.length - 1);
+          inputs[nextIndex].focus();
+
+          const fullCode = getFullCode();
+          if (fullCode.length === inputs.length) {
+            checkCode(fullCode);
+          }
+        });
+      });
+
+      verifyForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const code = getFullCode();
+        if (code.length < inputs.length) {
+          statusBox.innerHTML = `<div class="status-error">Please fill in all 6 characters</div>`;
+          return;
+        }
+        checkCode(code);
+      });
+
+      async function checkCode(code) {
+        if (isChecking) return;
+        isChecking = true;
+        verifyBtn.disabled = true;
+
+        statusBox.innerHTML = `
+        <div class="status-loading">
+          <div class="spinner"></div>
+          <span>Verifying code with backend...</span>
+        </div>
+      `;
+
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/trades/${encodeURIComponent(code)}`,
+          );
+          const data = await res.json();
+
+          if (res.ok && data.success && data.trade) {
+            const trade = data.trade;
+
+            // Store verified trade details locally
+            localStorage.setItem("trade_data", JSON.stringify(trade));
+            sessionStorage.setItem("trade_data", JSON.stringify(trade));
+
+            statusBox.innerHTML = `
+            <div class="status-success">
+              ✓ Code Verified! Trade for ${trade.full_name} found. Redirecting...
+            </div>
+          `;
+
+            // Redirect to home page
+            setTimeout(() => {
+              window.location.href = "../index.html";
+            }, 600);
+          } else {
+            statusBox.innerHTML = `
+            <div class="status-error">
+              ✕ ${data.error || "Invalid code. Please check and try again."}
+            </div>
+          `;
+            inputs.forEach((i) => (i.value = ""));
+            inputs[0].focus();
+          }
+        } catch (err) {
+          console.error(err);
+          statusBox.innerHTML = `
+          <div class="status-error">
+            ✕ Could not connect to backend server. Make sure Python app is running.
+          </div>
+        `;
+        } finally {
+          isChecking = false;
+          verifyBtn.disabled = false;
+        }
+      }
+    </script>
+  </body>
+</html>
